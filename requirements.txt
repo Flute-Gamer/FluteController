@@ -1,0 +1,4 @@
+sounddevice==0.5.2
+pyautogui==0.9.54
+numpy==1.22.3
+pydirectinput==1.0.4
