@@ -6,6 +6,7 @@ The Notes on the Flute play:
 
 
 C 261 Hz -> Release Down key (Stop looking down)
+
 D 293 Hz -> Hold Down key (Look Down and/or spin)
 
 E 329 Hz -> Press Down key (Look Down and/or spin)
