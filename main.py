@@ -2,27 +2,29 @@ import sounddevice as sd
 import numpy as np
 import pydirectinput
 import sys
+import time
 
 ##tabela de frequências do Fernando Iazzetta https://iazzetta.eca.usp.br/tutor/acustica/introducao/tabela1.html
 ##primeiro lá da flauta -> 440Hz
 
 fs = 44100 # frequência de amostragem
 duration = 0.4  # segundos
+blocksize = 4096
 
 ##print(sd.query_devices()) ##ver microfones
 ##sd.default.device = 1, 1     ##escolher microfones
 
-def recording():
-    try:
-        myrecording = sd.rec(int(duration * fs), samplerate=fs, channels=1)
-        sd.wait()
-        musicNote = fourier(myrecording)
-        print(musicNote)
-        pressKey(musicNote)
-        return 
+##def recording():
+    ##try:
+        ##myrecording = sd.rec(int(duration * fs), samplerate=fs, channels=1)
+        ##sd.wait()
+        ##musicNote = fourier(myrecording)
+        ##print(musicNote)
+        ##pressKey(musicNote)
+        ##return 
 
-    except Exception as e:
-        print("Erro na função recording:", e)
+    ##except Exception as e:
+        ##print("Erro na função recording:", e)
 
 def pressKey(frequency):
     try:
@@ -73,7 +75,8 @@ def fourier(recording):
         N = len(recording)
         T = 1/fs #Período de amostragem
         freq = np.fft.fftfreq(N, T)[:N//2]  #indices das frequencias de fourier 
-        mag = np.abs(np.fft.fft(recording.flatten()))[:N//2] #magnitudes das transformadas de fourier
+        window = np.hanning(N) #window pra evitar vazamento espectral
+        mag = np.abs(np.fft.fft(recording.flatten() * window))[:N//2] #magnitudes das transformadas de fourier
 
         ##limitar as frequencias entre 20 e 20khz, pois são as únicas úteis para som
         mask = (freq >= 20) & (freq <= 20000)
@@ -88,12 +91,28 @@ def fourier(recording):
     except Exception as e:
         print("Erro na função fourier:", e)
 
+
 try:
-    while True:
-        try:    
-            recording()
-        except Exception as e:
-            print("Erro:", e)
+    def callback(indata, frames, time, status):
+        audio = indata[:, 0]
+
+        volume = np.sqrt(np.mean(audio**2))
+        if volume < 0.01:
+            return  #se o som for pouco volumoso, não processa
+        
+        musicNote = fourier(audio)
+        print(musicNote)
+        pressKey(musicNote)
+
+    with sd.InputStream(
+        samplerate=fs,
+        channels=1,
+        blocksize=blocksize,
+        callback=callback
+    ):
+        while True:
+            time.sleep(0.1)
+            pass
 
 except KeyboardInterrupt:
     try:
