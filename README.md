@@ -17,7 +17,7 @@ F 349 Hz -> Release Left key (Stop walking to the left)
 
 G 391 Hz -> Hold Left key (Walk to the left)
 
-G# 415Hz -> Hold Left key (Walk to the left)
+G# 415Hz -> Hold Left key (Walk a little to the left)
 
 
 A 440 Hz -> Hold Right key (Walk to the right)

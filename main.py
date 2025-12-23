@@ -11,6 +11,8 @@ fs = 44100 # frequência de amostragem
 duration = 0.4  # segundos
 blocksize = 4096
 
+direction = ''
+
 ##print(sd.query_devices()) ##ver microfones
 ##sd.default.device = 1, 1     ##escolher microfones
 
@@ -27,6 +29,7 @@ blocksize = 4096
         ##print("Erro na função recording:", e)
 
 def pressKey(frequency):
+    global direction
     try:
         if 256 < frequency < 266:
             pydirectinput.keyUp('down')
@@ -35,20 +38,35 @@ def pressKey(frequency):
             pydirectinput.keyDown('down')
             return
         elif 324 < frequency < 334:
-            pydirectinput.press('down')
-            return
+            if direction == 'left':
+                pydirectinput.keyUp('left')
+                pydirectinput.press('down')
+                pydirectinput.keyDown('left')
+                return
+            if direction == 'right':
+                pydirectinput.keyUp('right')
+                pydirectinput.press('down')
+                pydirectinput.keyDown('right')
+            else:
+                pydirectinput.press('down')
         elif 339 < frequency < 359:
             pydirectinput.keyUp('left')
+            direction = ''
             return
         elif 381 < frequency < 401:
             pydirectinput.keyDown('left')
+            direction = 'left'
+            return
         elif 405 < frequency < 425:
             pydirectinput.press('left')
+            return
         elif 430 < frequency < 450: 
             pydirectinput.keyDown('right')
+            direction = 'right'
             return
         elif 483 < frequency < 503: 
             pydirectinput.keyUp('right')
+            direction = ''
             return
         elif 513 < frequency < 533:
             pydirectinput.press('right')
