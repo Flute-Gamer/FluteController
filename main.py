@@ -8,8 +8,8 @@ import time
 ##primeiro lá da flauta -> 440Hz
 
 fs = 44100 # frequência de amostragem
-duration = 0.4  # segundos
-blocksize = 4096
+##duration = 0.4  # segundos
+blocksize = 8192
 
 direction = ''
 
